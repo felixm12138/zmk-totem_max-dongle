@@ -149,7 +149,7 @@ int zmk_widget_battery_bar_init(struct zmk_widget_battery_bar *widget, lv_obj_t 
 
         /* ── L / R side label (PATCHED) ── */
         lv_obj_t *side_label = lv_label_create(info_container);
-        lv_obj_set_style_text_font(side_label, &FoundryGridnikMedium_16, 0);
+        lv_obj_set_style_text_font(side_label, &FoundryGridnikMedium_20, 0);
         lv_obj_set_style_text_color(side_label, lv_color_hex(0x606060), 0);
         lv_obj_align(side_label, LV_ALIGN_TOP_MID, 0, 2);
         lv_label_set_text(side_label, i == 0 ? "LEFT" : "RIGHT");
