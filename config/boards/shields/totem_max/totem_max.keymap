@@ -5,9 +5,8 @@
  * Layer 1: BT management (clear bonds, profiles)
  * Layers 2-5: Transparent (for ZMK Studio)
  *
- * Global key positions (56 keys total):
- *   Left  half (0-27):  R0(0-5) R1(6-11) R2(12-17) R3(18-23) R4(24-27)
- *   Right half (28-55): R0(28-33) R1(34-39) R2(40-45) R3(46-51) R4(52-55)
+ * Key positions follow the RMK matrix_map order: each row lists left keys,
+ * then right keys from the physical inner side outward.
  */
 
 #include <behaviors.dtsi>
@@ -23,7 +22,7 @@
         default_layer {
             display-name = "Base";
             bindings = <
-    /* Left half (0-27) */                        /* Right half (28-55) */
+    /* Left half */                              /* Right half */
     &kp ESC &kp N1 &kp N2 &kp N3 &kp N4 &kp N5    &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp BSPC
     &kp TAB &kp Q  &kp W  &kp E  &kp R  &kp T     &kp Y   &kp U  &kp I  &kp O  &kp P  &kp BSLH
     &kp CAPS &kp A &kp S  &kp D  &kp F  &kp G     &kp H   &kp J  &kp K  &kp L  &kp SEMI &kp QUOT
