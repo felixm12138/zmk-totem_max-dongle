@@ -1,0 +1,98 @@
+/*
+ * Totem Max — default keymap
+ *
+ * Layer 0: Base (QWERTY)
+ * Layers 1-5: Transparent (for ZMK Studio)
+ *
+ * Global key positions (56 keys total):
+ *   Left  half (0-27):  R0(0-5) R1(6-11) R2(12-17) R3(18-23) R4(24-27)
+ *                       Esc 1 2 3 4 5 | Tab Q W E R T | Caps A S D F G |
+ *                       LS Z X C V B | LCtrl LGui LAlt Space
+ *   Right half (28-55): R0(28-33) R1(34-39) R2(40-45) R3(46-51) R4(52-55)
+ *                       6 7 8 9 0 BSp | Y U I O P \ | H J K L ; ' |
+ *                       N M , . / RS | Space RAlt RGui RCtrl
+ */
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+
+/ {
+    keymap {
+        compatible = "zmk,keymap";
+        label = "Totem_Max";
+
+        /* ─── Layer 0: Base ─── */
+        default_layer {
+            display-name = "Base";
+            bindings = <
+    /* Left half (0-27) */                        /* Right half (28-55) */
+    &kp ESC &kp N1 &kp N2 &kp N3 &kp N4 &kp N5    &kp N6 &kp N7 &kp N8 &kp N9 &kp N0 &kp BSPC
+    &kp TAB &kp Q  &kp W  &kp E  &kp R  &kp T     &kp Y   &kp U  &kp I  &kp O  &kp P  &kp BSLH
+    &kp CAPS &kp A &kp S  &kp D  &kp F  &kp G     &kp H   &kp J  &kp K  &kp L  &kp SEMI &kp QUOT
+    &kp LSFT &kp Z &kp X  &kp C  &kp V  &kp B     &kp N   &kp M  &kp COMMA &kp DOT &kp FSLH &kp RSFT
+               &kp LCTL &kp LGUI &kp LALT &kp SPC  &kp SPC &kp RALT &kp RGUI &kp RCTL
+            >;
+        };
+
+        /* ─── Layer 1 ─── */
+        layer_1 {
+            display-name = "L1";
+            bindings = <
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+            &trans &trans &trans &trans          &trans &trans &trans &trans
+            >;
+        };
+
+        /* ─── Layer 2 ─── */
+        layer_2 {
+            display-name = "L2";
+            bindings = <
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+            &trans &trans &trans &trans          &trans &trans &trans &trans
+            >;
+        };
+
+        /* ─── Layer 3 ─── */
+        layer_3 {
+            display-name = "L3";
+            bindings = <
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+            &trans &trans &trans &trans          &trans &trans &trans &trans
+            >;
+        };
+
+        /* ─── Layer 4 ─── */
+        layer_4 {
+            display-name = "L4";
+            bindings = <
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+            &trans &trans &trans &trans          &trans &trans &trans &trans
+            >;
+        };
+
+        /* ─── Layer 5 ─── */
+        layer_5 {
+            display-name = "L5";
+            bindings = <
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
+            &trans &trans &trans &trans          &trans &trans &trans &trans
+            >;
+        };
+    };
+};

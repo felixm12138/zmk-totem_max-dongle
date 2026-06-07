@@ -1,0 +1,67 @@
+name: Build ZMK Firmware
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    container: zmkfirmware/zmk-build-arm:3.5
+    strategy:
+      matrix:
+        include:
+          - board: nice_nano_v2
+            shield: totem_max_left
+            artifact-name: totem_max_left_nice_nano_v2
+          - board: nice_nano_v2
+            shield: totem_max_right
+            artifact-name: totem_max_right_nice_nano_v2
+          - board: seeeduino_xiao_ble
+            shield: "totem_max_dongle prospector_adapter"
+            artifact-name: totem_max_dongle_seeeduino_xiao_ble
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Cache west modules
+        uses: actions/cache@v4
+        env:
+          cache-name: cache-zephyr-modules
+        with:
+          path: |
+            modules/
+            tools/
+            zephyr/
+            bootloader/
+            zmk/
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('config/west.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache-name }}-
+
+      - name: Initialize west
+        run: |
+          west init -l config
+          west update
+          west zephyr-export
+
+      - name: Build (${{ matrix.artifact-name }})
+        run: |
+          west build -b ${{ matrix.board }} -s zmk/app -d "build/${{ matrix.artifact-name }}" -- \
+            -DSHIELD="${{ matrix.shield }}" \
+            -DZMK_CONFIG="${PWD}/config"
+
+      - name: Rename artifact
+        run: |
+          cp "build/${{ matrix.artifact-name }}/zephyr/zmk.uf2" \
+             "${{ matrix.artifact-name }}.uf2"
+
+      - name: Archive artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: ${{ matrix.artifact-name }}.uf2

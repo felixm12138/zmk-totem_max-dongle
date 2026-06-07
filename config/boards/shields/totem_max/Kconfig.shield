@@ -1,0 +1,18 @@
+# Totem Max shield definition
+
+config SHIELD_TOTEM_MAX_LEFT
+    def_bool $(shields_list_contains,totem_max_left)
+    select SHIELD_TOTEM_MAX
+
+config SHIELD_TOTEM_MAX_RIGHT
+    def_bool $(shields_list_contains,totem_max_right)
+    select SHIELD_TOTEM_MAX
+
+config SHIELD_TOTEM_MAX_DONGLE
+    def_bool $(shields_list_contains,totem_max_dongle)
+    select SHIELD_TOTEM_MAX
+    select ZMK_SPLIT_ROLE_CENTRAL
+
+config SHIELD_TOTEM_MAX
+    bool
+    select ZMK_SPLIT_BLE

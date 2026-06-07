@@ -1,0 +1,31 @@
+# Totem Max shield Kconfig definitions
+
+if SHIELD_TOTEM_MAX_LEFT
+
+config ZMK_KEYBOARD_NAME
+    default "Totem_Max"
+
+config ZMK_KEYBOARD_MFR
+    default "Cube_Studio"
+
+endif
+
+if SHIELD_TOTEM_MAX_RIGHT
+
+config ZMK_KEYBOARD_NAME
+    default "Totem_Max"
+
+config ZMK_KEYBOARD_MFR
+    default "Cube_Studio"
+
+endif
+
+if SHIELD_TOTEM_MAX_DONGLE
+
+config ZMK_KEYBOARD_NAME
+    default "Totem_Max"
+
+config ZMK_KEYBOARD_MFR
+    default "Cube_Studio"
+
+endif

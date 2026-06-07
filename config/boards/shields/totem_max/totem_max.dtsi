@@ -1,0 +1,9 @@
+/*
+ * Totem Max — shared devicetree definitions
+ *
+ * Matrix (each half): 5 rows × 6 cols
+ * MCU: nRF52840 (Nice!Nano v2 / compatible)
+ * Diode direction: col2row
+ */
+
+#include <dt-bindings/zmk/matrix_transform.h>
