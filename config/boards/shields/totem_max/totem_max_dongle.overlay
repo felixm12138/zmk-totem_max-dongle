@@ -9,6 +9,8 @@
  * ZMK Studio and layer tracking.
  */
 
+#include <dt-bindings/zmk/matrix_transform.h>
+
 / {
     chosen {
         zmk,matrix-transform = &transform0;
