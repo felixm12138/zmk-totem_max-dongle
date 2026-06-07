@@ -10,7 +10,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: zmkfirmware/zmk-build-arm:3.5
+    container: zmkfirmware/zmk-build-arm:stable
     strategy:
       matrix:
         include:
@@ -20,9 +20,9 @@ jobs:
           - board: nice_nano_v2
             shield: totem_max_right
             artifact-name: totem_max_right_nice_nano_v2
-          - board: seeeduino_xiao_ble
+          - board: xiao_ble//zmk
             shield: "totem_max_dongle prospector_adapter"
-            artifact-name: totem_max_dongle_seeeduino_xiao_ble
+            artifact-name: totem_max_dongle_xiao_ble
 
     steps:
       - name: Checkout
@@ -39,14 +39,15 @@ jobs:
             zephyr/
             bootloader/
             zmk/
+            prospector-zmk-module/
           key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('config/west.yml') }}
           restore-keys: |
             ${{ runner.os }}-build-${{ env.cache-name }}-
 
-      - name: Initialize west
+      - name: West init & update
         run: |
           west init -l config
-          west update
+          west update --fetch-opt=--filter=tree:0
           west zephyr-export
 
       - name: Build (${{ matrix.artifact-name }})
@@ -57,11 +58,12 @@ jobs:
 
       - name: Rename artifact
         run: |
+          mkdir -p artifacts
           cp "build/${{ matrix.artifact-name }}/zephyr/zmk.uf2" \
-             "${{ matrix.artifact-name }}.uf2"
+             "artifacts/${{ matrix.artifact-name }}.uf2"
 
       - name: Archive artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact-name }}
-          path: ${{ matrix.artifact-name }}.uf2
+          path: artifacts/${{ matrix.artifact-name }}.uf2

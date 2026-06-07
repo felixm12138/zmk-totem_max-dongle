@@ -1,2 +1,9 @@
-name: totem_max_dongle
-manufacturer: Cube_Studio
+file_format: "1"
+id: totem_max_dongle
+name: Totem Max Dongle
+type: shield
+requires: [seeed_xiao]
+features:
+  - studio
+siblings:
+  - totem_max_dongle

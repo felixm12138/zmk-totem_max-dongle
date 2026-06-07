@@ -36,3 +36,7 @@
 &default_transform {
     row-offset = <5>;
 };
+
+&physical_layout0 {
+    kscan = <&kscan0>;
+};

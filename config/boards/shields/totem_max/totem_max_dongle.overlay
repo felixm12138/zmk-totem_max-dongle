@@ -1,8 +1,8 @@
 /*
  * Totem Max — dongle overlay
  *
- * Dongle has no physical keys; includes shared transform
- * from totem_max.dtsi so the keymap binds correctly.
+ * Includes shared transform + physical layout from totem_max.dtsi.
+ * Display/pinctrl are provided by prospector_adapter shield.
  */
 
 #include "totem_max.dtsi"
