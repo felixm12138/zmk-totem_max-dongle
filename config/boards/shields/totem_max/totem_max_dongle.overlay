@@ -1,14 +1,8 @@
+/*
+ * Totem Max — dongle overlay
+ *
+ * Dongle has no physical keys; includes shared transform
+ * from totem_max.dtsi so the keymap binds correctly.
+ */
+
 #include "totem_max.dtsi"
-
-/ {
-    chosen {
-        zmk,kscan = &mock_kscan;
-    };
-
-    mock_kscan: kscan {
-        compatible = "zmk,kscan-mock";
-        columns = <0>;
-        rows = <0>;
-        events = <0>;
-    };
-};
