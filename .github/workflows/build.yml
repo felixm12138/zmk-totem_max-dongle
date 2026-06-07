@@ -14,12 +14,12 @@ jobs:
     strategy:
       matrix:
         include:
-          - board: nice_nano_v2
+          - board: nice_nano
             shield: totem_max_left
-            artifact-name: totem_max_left_nice_nano_v2
-          - board: nice_nano_v2
+            artifact-name: totem_max_left_nice_nano
+          - board: nice_nano
             shield: totem_max_right
-            artifact-name: totem_max_right_nice_nano_v2
+            artifact-name: totem_max_right_nice_nano
           - board: xiao_ble//zmk
             shield: "totem_max_dongle prospector_adapter"
             artifact-name: totem_max_dongle_xiao_ble
