@@ -2,15 +2,12 @@
  * Totem Max — default keymap
  *
  * Layer 0: Base (QWERTY)
- * Layers 1-5: Transparent (for ZMK Studio)
+ * Layer 1: BT management (clear bonds, profiles)
+ * Layers 2-5: Transparent (for ZMK Studio)
  *
  * Global key positions (56 keys total):
  *   Left  half (0-27):  R0(0-5) R1(6-11) R2(12-17) R3(18-23) R4(24-27)
- *                       Esc 1 2 3 4 5 | Tab Q W E R T | Caps A S D F G |
- *                       LS Z X C V B | LCtrl LGui LAlt Space
  *   Right half (28-55): R0(28-33) R1(34-39) R2(40-45) R3(46-51) R4(52-55)
- *                       6 7 8 9 0 BSp | Y U I O P \ | H J K L ; ' |
- *                       N M , . / RS | Space RAlt RGui RCtrl
  */
 
 #include <behaviors.dtsi>
@@ -35,15 +32,15 @@
             >;
         };
 
-        /* ─── Layer 1 ─── */
+        /* ─── Layer 1: BT Management ─── */
         layer_1 {
-            display-name = "L1";
+            display-name = "B T";
             bindings = <
-    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
-    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
-    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
-    &trans &trans &trans &trans &trans &trans   &trans &trans &trans &trans &trans &trans
-            &trans &trans &trans &trans          &trans &trans &trans &trans
+    &bt BT_CLR &trans &trans &trans &trans &trans   &bt BT_SEL 0 &bt BT_SEL 1 &bt BT_SEL 2 &bt BT_SEL 3 &trans &trans
+    &trans     &trans &trans &trans &trans &trans   &trans        &trans        &trans        &trans        &trans &trans
+    &trans     &trans &trans &trans &trans &trans   &trans        &trans        &trans        &trans        &trans &trans
+    &trans     &trans &trans &trans &trans &trans   &trans        &trans        &trans        &trans        &trans &trans
+                &trans &trans &trans &trans          &trans &trans &trans &trans
             >;
         };
 
