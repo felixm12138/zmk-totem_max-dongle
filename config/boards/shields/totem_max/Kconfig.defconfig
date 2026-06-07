@@ -11,3 +11,8 @@ config ZMK_KEYBOARD_MFR
     default "Cube_Studio"
 
 endif
+
+# Define missing ZMK v0.3 symbol needed by prospector battery_bar widget
+config ZMK_SPLIT_BLE_PERIPHERAL_COUNT
+    int "Number of BLE peripherals"
+    default 1
