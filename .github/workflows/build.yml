@@ -53,6 +53,10 @@ jobs:
           west update --fetch-opt=--filter=tree:0
           west zephyr-export
 
+      - name: Apply Prospector display patches
+        run: |
+          sh scripts/apply-prospector-patches.sh
+
       - name: Build (${{ matrix.artifact-name }})
         run: |
           west build -b ${{ matrix.board }} -s zmk/app -d "build/${{ matrix.artifact-name }}" ${{ matrix.snippet_arg }} -- \
