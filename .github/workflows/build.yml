@@ -17,12 +17,15 @@ jobs:
           - board: nice_nano
             shield: totem_max_left
             artifact-name: totem_max_left_nice_nano
+            snippet_arg: ""
           - board: nice_nano
             shield: totem_max_right
             artifact-name: totem_max_right_nice_nano
+            snippet_arg: ""
           - board: xiao_ble//zmk
             shield: "totem_max_dongle prospector_adapter"
             artifact-name: totem_max_dongle_xiao_ble
+            snippet_arg: "-S studio-rpc-usb-uart"
 
     steps:
       - name: Checkout
@@ -52,7 +55,7 @@ jobs:
 
       - name: Build (${{ matrix.artifact-name }})
         run: |
-          west build -b ${{ matrix.board }} -s zmk/app -d "build/${{ matrix.artifact-name }}" -- \
+          west build -b ${{ matrix.board }} -s zmk/app -d "build/${{ matrix.artifact-name }}" ${{ matrix.snippet_arg }} -- \
             -DSHIELD="${{ matrix.shield }}" \
             -DZMK_CONFIG="${PWD}/config"
 

@@ -1,0 +1,22 @@
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/keys.h>
+{{ behaviour_includes }}
+
+/ {
+    combos {
+        compatible = "zmk,combos";
+
+        studio_unlock_combo {
+            timeout-ms = <50>;
+            key-positions = <48 55>;
+            bindings = <&studio_unlock>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+        label = "Totem_Max";
+{{ rendered_layers }}
+    };
+};
