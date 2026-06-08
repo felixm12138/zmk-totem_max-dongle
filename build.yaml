@@ -1,8 +1,10 @@
 include:
   - board: nice_nano
     shield: totem_max_left
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
   - board: nice_nano
     shield: totem_max_right
+    cmake-args: -DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n
   - board: xiao_ble//zmk
     shield: totem_max_dongle prospector_adapter
     snippet: studio-rpc-usb-uart

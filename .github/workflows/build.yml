@@ -18,14 +18,17 @@ jobs:
             shield: totem_max_left
             artifact-name: totem_max_left_nice_nano
             snippet_arg: ""
+            cmake_arg: "-DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n"
           - board: nice_nano
             shield: totem_max_right
             artifact-name: totem_max_right_nice_nano
             snippet_arg: ""
+            cmake_arg: "-DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n"
           - board: xiao_ble//zmk
             shield: "totem_max_dongle prospector_adapter"
             artifact-name: totem_max_dongle_xiao_ble
             snippet_arg: "-S studio-rpc-usb-uart"
+            cmake_arg: ""
 
     steps:
       - name: Checkout
@@ -61,7 +64,7 @@ jobs:
         run: |
           west build -b ${{ matrix.board }} -s zmk/app -d "build/${{ matrix.artifact-name }}" ${{ matrix.snippet_arg }} -- \
             -DSHIELD="${{ matrix.shield }}" \
-            -DZMK_CONFIG="${PWD}/config"
+            -DZMK_CONFIG="${PWD}/config" ${{ matrix.cmake_arg }}
 
       - name: Rename artifact
         run: |
