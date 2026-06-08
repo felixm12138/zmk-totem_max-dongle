@@ -19,5 +19,7 @@ if [ ! -d "${classic_layout_dir}" ]; then
     exit 1
 fi
 
-cp "${repo_root}/patches/battery_bar.c" "${classic_layout_dir}/battery_bar.c"
-echo "Applied Prospector battery bar patch."
+target="${classic_layout_dir}/battery_bar.c"
+cp "${repo_root}/patches/battery_bar.c" "${target}"
+grep -q "side_label" "${target}"
+echo "Applied Prospector battery bar patch: ${target}"

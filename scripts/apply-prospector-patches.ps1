@@ -16,7 +16,11 @@ if (-not (Test-Path -LiteralPath $classicLayoutDir -PathType Container)) {
     throw "Prospector classic layout directory was not found: $classicLayoutDir"
 }
 
-Copy-Item -LiteralPath (Join-Path $repoRoot "patches/battery_bar.c") `
-    -Destination (Join-Path $classicLayoutDir "battery_bar.c") -Force
+$target = Join-Path $classicLayoutDir "battery_bar.c"
+Copy-Item -LiteralPath (Join-Path $repoRoot "patches/battery_bar.c") -Destination $target -Force
 
-Write-Host "Applied Prospector battery bar patch."
+if (-not (Select-String -LiteralPath $target -Pattern "side_label" -Quiet)) {
+    throw "Prospector battery bar patch check failed: side_label was not found in $target"
+}
+
+Write-Host "Applied Prospector battery bar patch: $target"
