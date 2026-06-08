@@ -28,7 +28,7 @@ jobs:
             shield: "totem_max_dongle prospector_adapter"
             artifact-name: totem_max_dongle_xiao_ble
             snippet_arg: "-S studio-rpc-usb-uart"
-            cmake_arg: ""
+            cmake_arg: "-DKEYMAP_FILE=${PWD}/config/totem_max_dongle.keymap"
 
     steps:
       - name: Checkout
