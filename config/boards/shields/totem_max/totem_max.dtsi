@@ -4,16 +4,17 @@
  * Unified transform: 10 rows × 6 cols.
  * Left  half: rows 0–4, cols 0–5.
  * Right half: rows 5–9, cols 0–5 (right overlay applies row-offset = 5).
+ *
+ * Defines default_transform and physical_layout0 nodes.
+ * chosen is set by each shield overlay:
+ *   - left/right: zmk,matrix-transform (traditional, for split BLE transport)
+ *   - dongle:     zmk,physical-layout  (for ZMK Studio)
  */
 
 #include <dt-bindings/zmk/matrix_transform.h>
 #include "totem_max-layouts.dtsi"
 
 / {
-    chosen {
-        zmk,physical-layout = &physical_layout0;
-    };
-
     default_transform: keymap_transform_0 {
         compatible = "zmk,matrix-transform";
         columns = <6>;

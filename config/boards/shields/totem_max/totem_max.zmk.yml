@@ -5,7 +5,6 @@ type: shield
 requires: [pro_micro]
 features:
   - keys
-  - studio
 siblings:
   - totem_max_left
   - totem_max_right

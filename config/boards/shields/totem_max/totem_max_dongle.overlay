@@ -1,7 +1,8 @@
 /*
  * Totem Max — dongle overlay
  *
- * Includes shared transform + physical layout from totem_max.dtsi.
+ * The dongle has no physical keys. It uses zmk,physical-layout
+ * instead of zmk,matrix-transform in chosen to enable ZMK Studio.
  * Display/pinctrl are provided by prospector_adapter shield.
  */
 
@@ -9,7 +10,7 @@
 
 / {
     chosen {
-        zmk,kscan = &mock_kscan;
+        zmk,physical-layout = &physical_layout0;
     };
 
     mock_kscan: mock_kscan_0 {
@@ -18,4 +19,8 @@
         rows = <0>;
         events = <0>;
     };
+};
+
+&physical_layout0 {
+    kscan = <&mock_kscan>;
 };
