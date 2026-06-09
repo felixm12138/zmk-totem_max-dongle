@@ -1,26 +1,22 @@
 /*
  * Totem Max — dongle overlay
  *
- * The dongle has no physical keys. It uses zmk,physical-layout
- * instead of zmk,matrix-transform in chosen to enable ZMK Studio.
- * Display/pinctrl are provided by prospector_adapter shield.
+ * Dongle uses zmk,matrix-transform (same as peripherals)
+ * for reliable split BLE transport. ZMK Studio is temporarily
+ * disabled until the physical-layout split transport is verified.
  */
 
 #include "totem_max.dtsi"
 
 / {
     chosen {
-        zmk,physical-layout = &physical_layout0;
+        zmk,kscan = &mock_kscan;
     };
 
     mock_kscan: mock_kscan_0 {
         compatible = "zmk,kscan-mock";
-        columns = <0>;
-        rows = <0>;
+        columns = <12>;
+        rows = <5>;
         events = <0>;
     };
-};
-
-&physical_layout0 {
-    kscan = <&mock_kscan>;
 };
