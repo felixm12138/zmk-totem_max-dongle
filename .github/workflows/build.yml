@@ -7,5 +7,182 @@ on:
   workflow_dispatch:
 
 jobs:
+  matrix:
+    runs-on: ubuntu-22.04
+    name: Fetch Build Keyboards
+    outputs:
+      build_matrix: ${{ env.build_matrix }}
+      has_valid_build_matrix: ${{ steps.fetch.outputs.has_valid_build_matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Fetch Build Matrix
+        id: fetch
+        run: |
+          matrix_content=$(yq -oj -I0 build.yaml)
+
+          if [ -z "$matrix_content" ] || [ "$matrix_content" = "null" ]; then
+            echo "::notice file=build.yaml,title=Empty build matrix file::No firmware targets found."
+            echo "has_valid_build_matrix=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "build_matrix=$matrix_content" >> "$GITHUB_ENV"
+            echo "has_valid_build_matrix=true" >> "$GITHUB_OUTPUT"
+            echo "$matrix_content"
+          fi
+
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+    runs-on: ubuntu-latest
+    if: needs.matrix.outputs.has_valid_build_matrix == 'true'
+    container:
+      image: zmkfirmware/zmk-build-arm:stable
+    needs: matrix
+    name: Build
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.matrix.outputs.build_matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Create build directory
+        run: echo "build_dir=$(mktemp -d)" >> "$GITHUB_ENV"
+
+      - name: Prepare variables
+        shell: bash
+        env:
+          board: ${{ matrix.board }}
+          shield: ${{ matrix.shield }}
+          artifact_name: ${{ matrix.artifact-name }}
+          snippet: ${{ matrix.snippet }}
+        run: |
+          if [ -e zephyr/module.yml ]; then
+            zmk_load_arg=" -DZMK_EXTRA_MODULES='${GITHUB_WORKSPACE}'"
+            base_dir="${TMPDIR:-/tmp}/zmk-config"
+            mkdir -p "$base_dir"
+          else
+            zmk_load_arg=""
+            base_dir="$GITHUB_WORKSPACE"
+          fi
+
+          if [ -n "$snippet" ]; then
+            extra_west_args="-S \"$snippet\""
+          else
+            extra_west_args=""
+          fi
+
+          {
+            echo "base_dir=$base_dir"
+            echo "zephyr_version=$ZEPHYR_VERSION"
+            echo "extra_west_args=$extra_west_args"
+            echo "extra_cmake_args=${shield:+-DSHIELD=\"$shield\"}$zmk_load_arg"
+            echo "display_name=${shield:+$shield - }$board"
+            echo "artifact_name=${artifact_name:-${shield:+$shield-}${board//\//_}-zmk}"
+          } >> "$GITHUB_ENV"
+
+      - name: Copy config files to isolated temporary directory
+        run: |
+          if [ "${{ env.base_dir }}" != "$GITHUB_WORKSPACE" ]; then
+            mkdir "${{ env.base_dir }}/config"
+            cp -R config/* "${{ env.base_dir }}/config/"
+          fi
+
+      - name: Cache west modules
+        uses: actions/cache@v5
+        continue-on-error: true
+        env:
+          cache_name: cache-zephyr-${{ env.zephyr_version }}-modules
+        with:
+          path: |
+            ${{ env.base_dir }}/modules/
+            ${{ env.base_dir }}/tools/
+            ${{ env.base_dir }}/zephyr/
+            ${{ env.base_dir }}/bootloader/
+            ${{ env.base_dir }}/zmk/
+          key: ${{ runner.os }}-build-${{ env.cache_name }}-${{ hashFiles('**/west.yml', '**/build.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-${{ env.cache_name }}-
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
+      - name: West Init
+        working-directory: ${{ env.base_dir }}
+        run: west init -l "${{ env.base_dir }}/config"
+
+      - name: West Update
+        working-directory: ${{ env.base_dir }}
+        run: west update --fetch-opt=--filter=tree:0
+
+      - name: Check ZMK revision
+        working-directory: ${{ env.base_dir }}
+        run: |
+          zmk_revision=$(west list -f "{revision}" zmk)
+          echo "zmk_revision=${zmk_revision}" >> "$GITHUB_ENV"
+          echo "ZMK revision: ${zmk_revision}"
+
+      - name: West Zephyr export
+        working-directory: ${{ env.base_dir }}
+        run: west zephyr-export
+
+      - name: West Build (${{ env.display_name }})
+        working-directory: ${{ env.base_dir }}
+        shell: bash
+        run: |
+          set -o pipefail
+          log="${{ env.build_dir }}/west-build.log"
+          west build -s zmk/app -d "${{ env.build_dir }}" -b "${{ matrix.board }}" ${{ env.extra_west_args }} -- -DZMK_CONFIG=${{ env.base_dir }}/config ${{ env.extra_cmake_args }} ${{ matrix.cmake-args }} > "$log" 2>&1 || {
+            status=$?
+            echo "----- west build tail -----"
+            tail -n 160 "$log" || true
+            echo "----- west build error lines -----"
+            grep -nEi "error:|fatal:|devicetree error|CMake Error|undefined reference|aborting|failed" "$log" | tail -n 120 || true
+            exit "$status"
+          }
+          tail -n 80 "$log"
+
+      - name: Warn about building from main if build fails
+        if: failure() && env.zmk_revision == 'main'
+        run: |
+          echo "# Consider Pinning ZMK" >> "$GITHUB_STEP_SUMMARY"
+          echo "Your recent build failure might be the result of breaking changes made to ZMK's main branch." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Check ZMK board variant
+        working-directory: "${{ env.base_dir }}/config"
+        run: |
+          if ! grep "CONFIG_ZMK_BOARD_COMPAT=y" "${{ env.build_dir }}/zephyr/.config" > /dev/null; then
+            original_board=$(echo "${{ matrix.board }}" | sed -e 's$/.*$$')
+            if west boards --board-root ${{ env.base_dir }}/zmk/app/module --board-root ${{ env.base_dir }}/zmk/app --board "$original_board" --format "{qualifiers}" | grep "zmk" > /dev/null; then
+              echo "::error file=build/zephyr/.config,title=Missing ZMK Compat::The selected board is not set up for ZMK and there is a ZMK variant available."
+              exit 1
+            fi
+            echo "::warning file=build/zephyr/.config,title=Missing ZMK Compat::The selected board does not report explicit ZMK compat."
+          fi
+
+      - name: Rename artifacts
+        shell: bash
+        run: |
+          mkdir "${{ env.build_dir }}/artifacts"
+          if [ -f "${{ env.build_dir }}/zephyr/zmk.uf2" ]; then
+            cp "${{ env.build_dir }}/zephyr/zmk.uf2" "${{ env.build_dir }}/artifacts/${{ env.artifact_name }}.uf2"
+          elif [ -f "${{ env.build_dir }}/zephyr/zmk.bin" ]; then
+            cp "${{ env.build_dir }}/zephyr/zmk.bin" "${{ env.build_dir }}/artifacts/${{ env.artifact_name }}.bin"
+          fi
+
+      - name: Archive (${{ env.display_name }})
+        uses: actions/upload-artifact@v7
+        with:
+          name: artifact-${{ env.artifact_name }}
+          path: ${{ env.build_dir }}/artifacts
+
+  merge:
+    runs-on: ubuntu-latest
+    if: needs.matrix.outputs.has_valid_build_matrix == 'true'
+    needs: build
+    name: Merge Output Artifacts
+    steps:
+      - name: Merge Artifacts
+        uses: actions/upload-artifact/merge@v7
+        with:
+          name: firmware
+          pattern: artifact-*
+          delete-merged: true
