@@ -6,9 +6,9 @@
         display-name = "Totem Max";
 
         keys
-            = <&key_physical_attrs 100 100    0   65 -1000   166 325>
-            , <&key_physical_attrs 100 100  100   65 -1000   166 325>
-            , <&key_physical_attrs 100 100  211  140  -400   241 325>
+            = <&key_physical_attrs 100 100    0   65 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  100   65 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  211  140  (-400)  241 325>
             , <&key_physical_attrs 100 100  316   50     0     0   0>
             , <&key_physical_attrs 100 100  416  100     0     0   0>
             , <&key_physical_attrs 100 100  516  125     0     0   0>
@@ -18,9 +18,9 @@
             , <&key_physical_attrs 100 100 1321    0   400  1416 325>
             , <&key_physical_attrs 100 100 1431  140  1000  1491 325>
             , <&key_physical_attrs 100 100 1531  140  1000  1491 325>
-            , <&key_physical_attrs 100 100    0  165 -1000   166 325>
-            , <&key_physical_attrs 100 100  100  165 -1000   166 325>
-            , <&key_physical_attrs 100 100  211  240  -400   241 325>
+            , <&key_physical_attrs 100 100    0  165 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  100  165 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  211  240  (-400)  241 325>
             , <&key_physical_attrs 100 100  316  150     0     0   0>
             , <&key_physical_attrs 100 100  416  200     0     0   0>
             , <&key_physical_attrs 100 100  516  225     0     0   0>
@@ -30,9 +30,9 @@
             , <&key_physical_attrs 100 100 1321  100   400  1416 325>
             , <&key_physical_attrs 100 100 1431  240  1000  1491 325>
             , <&key_physical_attrs 100 100 1531  240  1000  1491 325>
-            , <&key_physical_attrs 100 100    0  265 -1000   166 325>
-            , <&key_physical_attrs 100 100  100  265 -1000   166 325>
-            , <&key_physical_attrs 100 100  211  340  -400   241 325>
+            , <&key_physical_attrs 100 100    0  265 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  100  265 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  211  340  (-400)  241 325>
             , <&key_physical_attrs 100 100  316  250     0     0   0>
             , <&key_physical_attrs 100 100  416  300     0     0   0>
             , <&key_physical_attrs 100 100  516  325     0     0   0>
@@ -42,9 +42,9 @@
             , <&key_physical_attrs 100 100 1321  200   400  1416 325>
             , <&key_physical_attrs 100 100 1431  340  1000  1491 325>
             , <&key_physical_attrs 100 100 1531  340  1000  1491 325>
-            , <&key_physical_attrs 100 100    0  365 -1000   166 325>
-            , <&key_physical_attrs 100 100  100  365 -1000   166 325>
-            , <&key_physical_attrs 100 100  211  440  -400   241 325>
+            , <&key_physical_attrs 100 100    0  365 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  100  365 (-1000)  166 325>
+            , <&key_physical_attrs 100 100  211  440  (-400)  241 325>
             , <&key_physical_attrs 100 100  316  350     0     0   0>
             , <&key_physical_attrs 100 100  416  400     0     0   0>
             , <&key_physical_attrs 100 100  516  425     0     0   0>
@@ -58,8 +58,8 @@
             , <&key_physical_attrs 100 100  376  425     0     0   0>
             , <&key_physical_attrs 100 100  401  410  1500   366 810>
             , <&key_physical_attrs 100 100  421  385  3000   366 810>
-            , <&key_physical_attrs 100 100 1106   60 -3000  1266 810>
-            , <&key_physical_attrs 100 100 1131   85 -1500  1266 810>
+            , <&key_physical_attrs 100 100 1106   60 (-3000) 1266 810>
+            , <&key_physical_attrs 100 100 1131   85 (-1500) 1266 810>
             , <&key_physical_attrs 100 100 1156  140     0     0   0>
             , <&key_physical_attrs 100 100 1256  140     0     0   0>
             ;
