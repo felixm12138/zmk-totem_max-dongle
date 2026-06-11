@@ -1,79 +1,11 @@
-name: Build ZMK Firmware
+name: Build ZMK firmware
 
 on:
   push:
-    branches: [master, main]
+    branches: [main, master]
   pull_request:
-    branches: [master, main]
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    container: zmkfirmware/zmk-build-arm:stable
-    strategy:
-      matrix:
-        include:
-          - board: nice_nano
-            shield: totem_max_left
-            artifact-name: totem_max_left_nice_nano
-            snippet_arg: ""
-            cmake_arg: "-DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n"
-          - board: nice_nano
-            shield: totem_max_right
-            artifact-name: totem_max_right_nice_nano
-            snippet_arg: ""
-            cmake_arg: "-DCONFIG_ZMK_SPLIT=y -DCONFIG_ZMK_SPLIT_ROLE_CENTRAL=n"
-          - board: xiao_ble//zmk
-            shield: "totem_max_dongle prospector_adapter"
-            artifact-name: totem_max_dongle_xiao_ble
-            snippet_arg: "-S studio-rpc-usb-uart"
-            cmake_arg: "-DKEYMAP_FILE=${PWD}/config/totem_max_dongle.keymap"
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Cache west modules
-        uses: actions/cache@v4
-        env:
-          cache-name: cache-zephyr-modules
-        with:
-          path: |
-            modules/
-            tools/
-            zephyr/
-            bootloader/
-            zmk/
-            prospector-zmk-module/
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('config/west.yml') }}
-          restore-keys: |
-            ${{ runner.os }}-build-${{ env.cache-name }}-
-
-      - name: West init & update
-        run: |
-          west init -l config
-          west update --fetch-opt=--filter=tree:0
-          west zephyr-export
-
-      - name: Apply Prospector display patches
-        run: |
-          sh scripts/apply-prospector-patches.sh
-
-      - name: Build (${{ matrix.artifact-name }})
-        run: |
-          west build -b ${{ matrix.board }} -s zmk/app -d "build/${{ matrix.artifact-name }}" ${{ matrix.snippet_arg }} -- \
-            -DSHIELD="${{ matrix.shield }}" \
-            -DZMK_CONFIG="${PWD}/config" ${{ matrix.cmake_arg }}
-
-      - name: Rename artifact
-        run: |
-          mkdir -p artifacts
-          cp "build/${{ matrix.artifact-name }}/zephyr/zmk.uf2" \
-             "artifacts/${{ matrix.artifact-name }}.uf2"
-
-      - name: Archive artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact-name }}
-          path: artifacts/${{ matrix.artifact-name }}.uf2
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main

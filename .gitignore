@@ -1,0 +1,16 @@
+.west/
+build/
+build-*/
+artifacts/
+modules/
+tools/
+zephyr/
+bootloader/
+zmk/
+prospector-zmk-module/
+*.uf2
+*.bin
+*.hex
+*.elf
+*.map
+*.log

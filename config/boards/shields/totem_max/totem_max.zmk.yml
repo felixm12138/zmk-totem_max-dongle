@@ -2,9 +2,12 @@ file_format: "1"
 id: totem_max
 name: Totem Max
 type: shield
+url: https://github.com/felixm12138/totem_max_rmk
 requires: [pro_micro]
 features:
   - keys
+  - studio
 siblings:
   - totem_max_left
   - totem_max_right
+  - totem_max_dongle

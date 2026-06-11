@@ -1,11 +1,3 @@
-/*
- * Totem Max — dongle overlay
- *
- * Dongle uses zmk,matrix-transform (same as peripherals)
- * for reliable split BLE transport. ZMK Studio is temporarily
- * disabled until the physical-layout split transport is verified.
- */
-
 #include "totem_max.dtsi"
 
 / {
@@ -15,8 +7,8 @@
 
     mock_kscan: mock_kscan_0 {
         compatible = "zmk,kscan-mock";
-        columns = <12>;
-        rows = <5>;
+        columns = <0>;
+        rows = <0>;
         events = <0>;
     };
 };

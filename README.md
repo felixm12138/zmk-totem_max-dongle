@@ -1,82 +1,51 @@
-# Totem Max — ZMK Firmware (with Prospector Dongle)
+# Totem Max ZMK
 
-ZMK 固件仓库 for **Totem Max** 分体键盘 + **Prospector** 加密狗。
+ZMK user config for Totem Max using a Prospector display dongle as the split
+central. The source of truth for the matrix and base keymap is
+`felixm12138/totem_max_rmk`.
 
-| 组件 | 主控 | 角色 |
-|------|------|------|
-| 左半 | nRF52840 (Nice!Nano v2) | BLE Peripheral |
-| 右半 | nRF52840 (Nice!Nano v2) | BLE Peripheral |
-| Prospector 加密狗 | Seeed Studio XIAO nRF52840 BLE | BLE Central + LCD 屏幕 |
+## Targets
 
-## 架构
+- `totem_max_left`: nice!nano-compatible left half, BLE split peripheral.
+- `totem_max_right`: nice!nano-compatible right half, BLE split peripheral.
+- `totem_max_dongle_prospector`: Prospector/XIAO BLE dongle, split central,
+  ZMK Studio over USB, and Prospector status screen.
+- `settings_reset_nice_nano` and `settings_reset_xiao_ble`: reset firmware for
+  pairing recovery.
 
-```
-┌──────────────────────┐     BLE      ┌──────────────────────┐
-│  Totem Max 左半      │◄────────────►│  Prospector (中央)   │
-│  (Peripheral)        │              │  · Central 角色      │
-│                      │              │  · LCD 显示          │
-│                      │     BLE      │  · ZMK Studio        │
-│  Totem Max 右半      │◄────────────►│                      │
-│  (Peripheral)        │              └──────────────────────┘
-└──────────────────────┘
-```
+## Flashing
 
-Prospector 作为 **BLE 中央设备**，同时连接左右两个分体，在屏幕上显示当前层、电池电量、连接状态等信息。
+1. Flash `settings_reset_nice_nano` to both keyboard halves.
+2. Flash `settings_reset_xiao_ble` to the Prospector dongle.
+3. Flash `totem_max_left` to the left half and `totem_max_right` to the right
+   half.
+4. Flash `totem_max_dongle_prospector` to the Prospector.
+5. Pair the left half first, then the right half. Prospector displays
+   peripheral battery/connection widgets in pairing order.
 
-## GitHub Actions 编译
-
-1. Fork 本仓库，进入 **Actions** → **Build ZMK Firmware** → 手动运行
-2. 编译完成后下载 3 个 `.uf2` 文件：
-
-| Artifact | 刷入设备 |
-|----------|---------|
-| `totem_max_left_nice_nano_v2.uf2` | 左半 Nice!Nano v2 |
-| `totem_max_right_nice_nano_v2.uf2` | 右半 Nice!Nano v2 |
-| `totem_max_dongle_seeeduino_xiao_ble.uf2` | Prospector (XIAO nRF52840 BLE) |
-
-### 配对顺序
-
-刷写完成后，按以下顺序配对：
-
-1. **先刷写左右半**和**加密狗**的所有固件
-2. **加密狗上电**（Prospector 会进入等待配对状态）
-3. **左半上电** → 自动配对到加密狗
-4. **右半上电** → 自动配对到加密狗
-5. 如果连接失败，需要按 `&bt BT_CLR` 清除配对记录后重试
-
-> ⚠️ 配对顺序：**先左后右**，Prospector 的电池电量显示依赖于配对的顺序。
-
-## 本地编译
-
-```bash
-# 初始化
-west init -l config
-west update
-west zephyr-export
-
-# 编译左侧
-west build -b nice_nano_v2 -s zmk/app -d build/left -- \
-  -DSHIELD=totem_max_left -DZMK_CONFIG="${PWD}/config"
-
-# 编译右侧
-west build -b nice_nano_v2 -s zmk/app -d build/right -- \
-  -DSHIELD=totem_max_right -DZMK_CONFIG="${PWD}/config"
-
-# 编译 Prospector 加密狗（多 shield 合并）
-west build -b seeeduino_xiao_ble -s zmk/app -d build/dongle -- \
-  -DSHIELD="totem_max_dongle prospector_adapter" \
-  -DZMK_CONFIG="${PWD}/config"
-```
-
-## 层分布
-
-| 层 | 名称 | 用途 |
-|----|------|------|
-| 0 | Base | QWERTY 主键位层 |
-| 1-5 | L1-L5 | 透明层（通过 ZMK Studio 自定义） |
-
-Prospector LCD 屏幕会显示当前激活层的名称（"Base" / "L1" / "L2" 等）。
+The dongle is the only USB/BLE HID central. The left and right halves are built
+as split peripherals and do not expose USB HID to the host.
 
 ## ZMK Studio
 
-本固件支持 **ZMK Studio**，可通过 [studio.zmk.dev](https://studio.zmk.dev) 在浏览器中实时修改键位映射。加密狗需要连接 USB 后使用 Studio。
+The dongle build uses the `studio-rpc-usb-uart` snippet and enables
+`CONFIG_ZMK_STUDIO`. Studio locking is disabled so the RMK-equivalent keymap
+does not need an extra unlock key.
+
+## Local build
+
+```sh
+west init -l config
+west update --fetch-opt=--filter=tree:0
+west zephyr-export
+
+west build -s zmk/app -d build/left -b nice_nano//zmk -- \
+  -DSHIELD=totem_max_left -DZMK_CONFIG=$PWD/config
+
+west build -s zmk/app -d build/right -b nice_nano//zmk -- \
+  -DSHIELD=totem_max_right -DZMK_CONFIG=$PWD/config
+
+west build -s zmk/app -d build/dongle -b xiao_ble//zmk -S studio-rpc-usb-uart -- \
+  -DSHIELD="totem_max_dongle prospector_adapter" \
+  -DZMK_CONFIG=$PWD/config -DCONFIG_ZMK_STUDIO=y
+```
