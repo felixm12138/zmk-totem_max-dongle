@@ -4,13 +4,16 @@ manifest:
       url-base: https://github.com/zmkfirmware
     - name: carrefinho
       url-base: https://github.com/carrefinho
+    - name: felixm12138
+      url-base: https://github.com/felixm12138
   projects:
     - name: zmk
       remote: zmkfirmware
       revision: main
       import: app/west.yml
     - name: prospector-zmk-module
-      remote: carrefinho
-      revision: feat/new-status-screens
+      remote: felixm12138
+      repo-path: zmk-totem_max-dongle
+      revision: prospector-totem-display-fix
   self:
     path: config
