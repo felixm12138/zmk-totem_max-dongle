@@ -21,12 +21,25 @@ struct connection_update_state {
     bool connected;
 };
 
+static const char *side_label(uint8_t source) {
+    return source == 0 ? "L" : "R";
+}
+
+static uint8_t display_source(uint8_t source) {
+    if (ZMK_SPLIT_BLE_PERIPHERAL_COUNT == 2) {
+        return source == 0 ? 1 : 0;
+    }
+
+    return source;
+}
+
 static void set_battery_bar_value(lv_obj_t *widget_obj, struct battery_update_state state, bool is_initialized) {
     if (!is_initialized || state.source >= ZMK_SPLIT_BLE_PERIPHERAL_COUNT) {
         return;
     }
 
-    lv_obj_t *info_container = lv_obj_get_child(widget_obj, state.source);
+    uint8_t display = display_source(state.source);
+    lv_obj_t *info_container = lv_obj_get_child(widget_obj, display);
     if (!info_container) {
         return;
     }
@@ -38,7 +51,7 @@ static void set_battery_bar_value(lv_obj_t *widget_obj, struct battery_update_st
     }
 
     lv_bar_set_value(bar, state.level, LV_ANIM_ON);
-    lv_label_set_text_fmt(num, "%d", state.level);
+    lv_label_set_text_fmt(num, "%s %d%%", side_label(display), state.level);
 
     if (state.level < 20) {
         lv_obj_set_style_bg_color(bar, lv_color_hex(0xD3900F), LV_PART_INDICATOR);
@@ -58,7 +71,8 @@ static void set_battery_bar_connected(lv_obj_t *widget_obj, struct connection_up
         return;
     }
 
-    lv_obj_t *info_container = lv_obj_get_child(widget_obj, state.source);
+    uint8_t display = display_source(state.source);
+    lv_obj_t *info_container = lv_obj_get_child(widget_obj, display);
     if (!info_container) {
         return;
     }
@@ -70,6 +84,8 @@ static void set_battery_bar_connected(lv_obj_t *widget_obj, struct connection_up
     if (!bar || !num || !nc_bar || !nc_num) {
         return;
     }
+
+    lv_label_set_text_fmt(nc_num, "%s --", side_label(display));
 
     // Prevent animation stacking on rapid connection changes
     lv_anim_del(bar, NULL);
@@ -184,7 +200,7 @@ int zmk_widget_battery_bar_init(struct zmk_widget_battery_bar *widget, lv_obj_t 
         lv_obj_set_style_text_color(num, lv_color_white(), 0);
         lv_obj_set_style_opa(num, 255, 0);
         lv_obj_align(num, LV_ALIGN_CENTER, 0, 0);
-        lv_label_set_text(num, "N/A");
+        lv_label_set_text_fmt(num, "%s N/A", side_label(i));
 
         lv_obj_set_style_opa(num, 0, 0);
 
@@ -196,9 +212,10 @@ int zmk_widget_battery_bar_init(struct zmk_widget_battery_bar *widget, lv_obj_t 
         lv_obj_set_style_bg_opa(nc_bar, 255, 0);
 
         lv_obj_t *nc_num = lv_label_create(info_container);
+        lv_obj_set_style_text_font(nc_num, &FG_Medium_20, 0);
         lv_obj_set_style_text_color(nc_num, lv_color_hex(0xe63030), 0);
         lv_obj_align(nc_num, LV_ALIGN_CENTER, 0, 0);
-        lv_label_set_text(nc_num, LV_SYMBOL_CLOSE);
+        lv_label_set_text_fmt(nc_num, "%s --", side_label(i));
         lv_obj_set_style_opa(nc_num, 255, 0);
     }
 
